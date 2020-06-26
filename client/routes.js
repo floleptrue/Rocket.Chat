@@ -12,7 +12,7 @@ import { KonchatNotification } from '../app/ui';
 import { ChatSubscription } from '../app/models';
 import { roomTypes, handleError } from '../app/utils';
 import { call } from '../app/ui-utils';
-import { renderRouteComponent } from './reactAdapters';
+import { renderRouteComponent, createTemplateForComponent } from './reactAdapters';
 
 const getRoomById = mem((rid) => call('getRoomById', rid));
 
@@ -106,6 +106,20 @@ FlowRouter.route('/directory/:tab?', {
 
 FlowRouter.route('/account/:group?', {
 	name: 'account',
+	action: (params) => {
+		if (!params.group) {
+			params.group = 'Profile';
+		}
+		params.group = s.capitalize(params.group, true);
+		renderRouteComponent(() => import('./account/AccountRoute'), { template: 'main', region: 'center' });
+	},
+	triggersExit: [function() {
+		$('.main-content').addClass('rc-old');
+	}],
+});
+
+FlowRouter.route('/account2/:group?', {
+	name: 'account2',
 	action: (params) => {
 		if (!params.group) {
 			params.group = 'Profile';
